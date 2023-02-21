@@ -3,9 +3,12 @@ package biz.cunning.cunning_document_scanner
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.graphics.drawable.DrawableCompat
 import biz.cunning.cunning_document_scanner.constants.DefaultSetting
 import biz.cunning.cunning_document_scanner.constants.DocumentScannerExtra
 import biz.cunning.cunning_document_scanner.extensions.move

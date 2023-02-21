@@ -28,7 +28,7 @@ class CircleButton(
 
     init {
         // set outer ring style
-        ring.color = Color.RED
+        ring.color = Color.WHITE
         ring.style = Paint.Style.STROKE
         ring.strokeWidth = resources.getDimension(R.dimen.small_button_ring_thickness)
     }
