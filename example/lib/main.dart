@@ -50,7 +50,8 @@ class _MyAppState extends State<MyApp> {
   void onPressed() async {
     List<String> pictures;
     try {
-      pictures = await CunningDocumentScanner.getPictures() ?? [];
+      pictures =
+          await CunningDocumentScanner.getPictures(0x800000, 0x800080) ?? [];
       if (!mounted) return;
       setState(() {
         _pictures = pictures;

@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageButton
 import biz.cunning.cunning_document_scanner.R
+import biz.cunning.cunning_document_scanner.constants.AppColors
 
 
 /**
@@ -28,9 +29,13 @@ class CircleButton(
 
     init {
         // set outer ring style
-        ring.color = Color.WHITE
+        ring.color = AppColors.instance.buttonColor
         ring.style = Paint.Style.STROKE
         ring.strokeWidth = resources.getDimension(R.dimen.small_button_ring_thickness)
+    }
+    fun setRingColor(color: Int) {
+        ring.color = color
+        invalidate()
     }
 
     /**

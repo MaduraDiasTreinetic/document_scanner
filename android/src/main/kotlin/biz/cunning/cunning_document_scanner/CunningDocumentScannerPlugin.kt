@@ -3,6 +3,8 @@ package biz.cunning.cunning_document_scanner
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Color
+import android.provider.CalendarContract.Colors
 import androidx.core.app.ActivityCompat
 import biz.cunning.cunning_document_scanner.constants.DefaultSetting
 import biz.cunning.cunning_document_scanner.constants.DocumentScannerExtra
@@ -40,13 +42,31 @@ class CunningDocumentScannerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         if (call.method == "getPictures") {
+
             this.pendingResult = result
-            startScan()
+
+            val arguments = call.arguments() as Map<String, Int>?
+            val buttonColor = arguments!!["buttonColor"]
+            val layoutColor = arguments!!["backgroundColor"]
+       
+            val buttonColorArray = buttonColor?.let { getRGB(it) }
+            val layoutColorArray = layoutColor?.let { getRGB(it) }
+
+
+            if (layoutColorArray != null&& buttonColorArray!=null) {
+                startScan(buttonColorArray,layoutColorArray)
+            }
         } else {
             result.notImplemented()
         }
     }
 
+    private fun getRGB(hex: Int): IntArray? {
+        val r = hex and 0xFF0000 shr 16
+        val g = hex and 0xFF00 shr 8
+        val b = hex and 0xFF
+        return intArrayOf(r, g, b)
+    }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
@@ -137,17 +157,28 @@ class CunningDocumentScannerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     /**
      * create intent to launch document scanner and set custom options
      */
-    fun createDocumentScanIntent(): Intent {
+    fun createDocumentScanIntent( buttonColor:IntArray,layoutColor:IntArray): Intent {
+
         val documentScanIntent = Intent(activity, DocumentScannerActivity::class.java)
+
         documentScanIntent.putExtra(
             DocumentScannerExtra.EXTRA_LET_USER_ADJUST_CROP,
+
+
             true
         )
         documentScanIntent.putExtra(
             DocumentScannerExtra.EXTRA_MAX_NUM_DOCUMENTS,
             100
         )
-
+        documentScanIntent.putExtra(
+            DocumentScannerExtra.BUTTON_COLOR,
+            Color.rgb(buttonColor[0],buttonColor[1],buttonColor[2])
+        )
+        documentScanIntent.putExtra(
+            DocumentScannerExtra.LAYOUT_COLOR,
+            Color.rgb(layoutColor[0],layoutColor[1],layoutColor[2])
+        )
         return documentScanIntent
     }
 
@@ -155,8 +186,8 @@ class CunningDocumentScannerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     /**
      * add document scanner result handler and launch the document scanner
      */
-    fun startScan() {
-        val intent = createDocumentScanIntent()
+    fun startScan(buttonColor: IntArray, layoutColor:IntArray) {
+        val intent = createDocumentScanIntent(buttonColor,layoutColor)
         try {
             ActivityCompat.startActivityForResult(
                 this.activity,

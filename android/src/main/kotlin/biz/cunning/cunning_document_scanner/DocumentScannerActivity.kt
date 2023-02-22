@@ -4,11 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.LightingColorFilter
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.DrawableCompat
+import biz.cunning.cunning_document_scanner.constants.AppColors
 import biz.cunning.cunning_document_scanner.constants.DefaultSetting
 import biz.cunning.cunning_document_scanner.constants.DocumentScannerExtra
 import biz.cunning.cunning_document_scanner.extensions.move
@@ -18,6 +21,7 @@ import biz.cunning.cunning_document_scanner.extensions.screenWidth
 import biz.cunning.cunning_document_scanner.extensions.screenHeight
 import biz.cunning.cunning_document_scanner.models.Document
 import biz.cunning.cunning_document_scanner.models.Quad
+import biz.cunning.cunning_document_scanner.ui.CircleButton
 import biz.cunning.cunning_document_scanner.ui.ImageCropView
 import biz.cunning.cunning_document_scanner.utils.CameraUtil
 import biz.cunning.cunning_document_scanner.utils.FileUtil
@@ -139,6 +143,7 @@ class DocumentScannerActivity : AppCompatActivity() {
      *
      * @param savedInstanceState persisted data that maintains state
      */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -147,6 +152,15 @@ class DocumentScannerActivity : AppCompatActivity() {
         // doesn't see this until they finish taking a photo
         setContentView(R.layout.activity_image_crop)
         imageView = findViewById(R.id.image_view)
+
+        val retakePhotoButton: CircleButton = findViewById(R.id.retake_photo_button)
+        val completeDocumentScanButton: CircleButton = findViewById(
+            R.id.complete_document_scan_button
+        )
+        val imageViewBackGround:RelativeLayout  = findViewById(
+            R.id.image_view_background
+        )
+
 
         try {
             // validate maxNumDocuments option, and update default if user sets it
@@ -170,6 +184,28 @@ class DocumentScannerActivity : AppCompatActivity() {
                 }
                 letUserAdjustCrop = it as Boolean
             }
+            // get  button color colors
+            intent.extras?.get(DocumentScannerExtra.BUTTON_COLOR)?.let {
+
+                if (intent.extras!!.containsKey(DocumentScannerExtra.BUTTON_COLOR)) {
+                    AppColors.instance.buttonColor   = intent.getIntExtra(DocumentScannerExtra.BUTTON_COLOR,Color.WHITE)}
+            }
+
+            //get layout color
+            intent.extras?.get(DocumentScannerExtra.LAYOUT_COLOR)?.let {
+
+                if (intent.extras!!.containsKey(DocumentScannerExtra.LAYOUT_COLOR)) {
+                    AppColors.instance.layoutColor   = intent.getIntExtra(DocumentScannerExtra.LAYOUT_COLOR,Color.BLACK)}
+            }
+
+            retakePhotoButton.colorFilter = LightingColorFilter(AppColors.instance.buttonColor,AppColors.instance.buttonColor)
+            retakePhotoButton.setRingColor(AppColors.instance.buttonColor)
+
+            completeDocumentScanButton.colorFilter=LightingColorFilter(AppColors.instance.buttonColor,AppColors.instance.buttonColor)
+            completeDocumentScanButton.setRingColor(AppColors.instance.buttonColor)
+
+            imageViewBackGround.setBackgroundColor(AppColors.instance.layoutColor)
+
 
             // if we don't want user to move corners, we can let the user only take 1 photo
             if (!letUserAdjustCrop) {
@@ -192,10 +228,10 @@ class DocumentScannerActivity : AppCompatActivity() {
         // set click event handlers for new document button, accept and crop document button,
         // and retake document photo button
       //  val newPhotoButton: ImageButton = findViewById(R.id.new_photo_button)
-        val completeDocumentScanButton: ImageButton = findViewById(
-            R.id.complete_document_scan_button
-        )
-        val retakePhotoButton: ImageButton = findViewById(R.id.retake_photo_button)
+//        val completeDocumentScanButton: ImageButton = findViewById(
+//            R.id.complete_document_scan_button
+//        )
+//        val retakePhotoButton: ImageButton = findViewById(R.id.retake_photo_button)
 
       //  newPhotoButton.onClick { onClickNew() }
         completeDocumentScanButton.onClick { onClickDone() }
